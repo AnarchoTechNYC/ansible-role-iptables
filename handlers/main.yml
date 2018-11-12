@@ -1,0 +1,6 @@
+---
+- name: Apply iptables rules.
+  command: "{{ item }}"
+  loop:
+    - "iptables-restore /etc/iptables/rules.v4"
+    - "ip6tables-restore /etc/iptables/rules.v6"

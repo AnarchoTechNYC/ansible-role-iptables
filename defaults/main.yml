@@ -1,0 +1,87 @@
+# Default variables for the `iptables` Linux kernel packet filter.
+---
+# IPv4 packet filtering.
+ipv4_tables:
+
+  # Structure of the Linux kernel's `filter` IPv4 table.
+  filter:
+
+    # The `INPUT` chain's structure.
+    INPUT:
+      policy: DROP # Drop packets not matching a defined rule.
+      #counters:
+        #packets: 0
+        #bytes: 0
+  
+      # Rules for the `INPUT` chain in the `filter` table. The order
+      # in which the rules are listed matters because it determines
+      # the processing order for each packet. The first rule that
+      # matches a given packet will be applied to the packet.
+      rules:
+  
+        # Accept any traffic coming in to the loopback interface.
+        - in_interface: lo
+
+          #out_interface:
+
+          #protocol: tcp
+
+          #source_addresses:
+            #- ip:
+            #  mask:
+            #  not: true # Invert the test.
+
+          # Source port or port range in first:last notation.
+          #source_port:
+
+          #destination_addresses:
+            #- ip:
+            #  mask:
+            #  not: true # Invert the test.
+
+          #destination_port:
+
+          target: ACCEPT
+  
+        # Accept any connected, pre-established traffic.
+        - module: conntrack
+          module_options:
+            - "--ctstate RELATED,ESTABLISHED"
+          target: ACCEPT
+  
+        # Accept any traffic bound for TCP port 22.
+        - protocol: tcp
+          destination_port: 22
+          target: ACCEPT
+  
+    # The `FORWARD` chain's structure.
+    FORWARD:
+      policy: ACCEPT
+  
+    # The `OUTPUT` chain's structure.
+    OUTPUT:
+      policy: ACCEPT
+
+# IPv6 packet filtering.
+ipv6_tables:
+  filter:
+    INPUT:
+      policy: DROP # Drop packets not matching a defined rule.
+      rules:
+        - in_interface: lo
+          target: ACCEPT
+
+        - module: conntrack
+          module_options:
+            - "--ctstate RELATED,ESTABLISHED"
+          target: ACCEPT
+
+        - protocol: tcp
+          destination_port: 22
+          target: ACCEPT
+
+    FORWARD:
+      policy: ACCEPT
+
+    OUTPUT:
+      policy: ACCEPT

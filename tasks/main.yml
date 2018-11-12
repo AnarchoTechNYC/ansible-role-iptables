@@ -1,0 +1,23 @@
+---
+- name: Install iptables management utilities.
+  package:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - iptables
+    - iptables-persistent
+
+- name: Configure iptables firewall.
+  register: configure_iptables
+  template:
+    src: "iptables.{{ item }}.j2"
+    dest: "/etc/iptables/{{ item }}"
+    validate: "iptables-restore --test %s"
+  loop:
+    - rules.v4
+    - rules.v6
+  notify: Apply iptables rules.
+
+- name: Apply firewall configuration.
+  when: configure_iptables is changed
+  meta: flush_handlers
