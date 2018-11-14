@@ -10,12 +10,14 @@
 - name: Configure iptables firewall.
   register: configure_iptables
   template:
-    src: "iptables.{{ item }}.j2"
-    dest: "/etc/iptables/{{ item }}"
+    src: "iptables.rules.j2"
+    dest: "/etc/iptables/rules.v{{ item.version }}"
     validate: "iptables-restore --test %s"
   loop:
-    - rules.v4
-    - rules.v6
+    - version: 4
+      ip_tables: "{{ ipv4_tables | default({}) }}"
+    - version: 6
+      ip_tables: "{{ ipv6_tables | default({}) }}"
   notify: Apply iptables rules.
 
 - name: Apply firewall configuration.

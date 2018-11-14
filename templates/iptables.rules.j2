@@ -1,7 +1,7 @@
-# Linux kernel iptables IPv6 packet filter configuration.
+# Linux kernel iptables IPv{{ item.version }} packet filter configuration.
 # {{ ansible_managed }}
-{% if ipv6_tables is defined %}
-{% for table_name, chains in ipv6_tables.items() %}
+{% if item.ip_tables is defined %}
+{% for table_name, chains in item.ip_tables.items() %}
 *{{ table_name }}
 {% for chain_name, chain in chains.items() %}
 :{{ chain_name }} {{ chain.policy | default('ACCEPT') }}{% if chain.counters is defined %} [{{ chain.counters.packets | default(0) }}:{{ chain.counters.bytes | default(0) }}]{% endif %}{{''}}
