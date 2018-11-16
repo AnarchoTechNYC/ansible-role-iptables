@@ -1,5 +1,17 @@
 # Default variables for the `iptables` Linux kernel packet filter.
 ---
+# Convenience variable to define inbound open ports.
+#iptables_open_ports:
+#  - protocol: udp
+#    destination_port: 5353
+
+# Convenience variable to define inbound closed ports.
+#iptables_closed_ports:
+#  - protocol: tcp
+#    destination_port: telnet
+#  - protocol: tcp
+#    destination_port: 25
+
 # IPv4 packet filtering.
 ipv4_tables:
 
@@ -49,9 +61,9 @@ ipv4_tables:
             - "--ctstate RELATED,ESTABLISHED"
           target: ACCEPT
   
-        # Accept any traffic bound for TCP port 22.
+        # Accept any traffic bound for the SSH remote management port.
         - protocol: tcp
-          destination_port: 22
+          destination_port: "{{ ssh_port | default(22) }}"
           target: ACCEPT
   
     # The `FORWARD` chain's structure.

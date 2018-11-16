@@ -1,4 +1,7 @@
 ---
+- name: Configure IP firewall.
+  import_tasks: configure-firewall.yml
+
 - name: Install iptables management utilities.
   package:
     name: "{{ item }}"
@@ -7,17 +10,19 @@
     - iptables
     - iptables-persistent
 
-- name: Configure iptables firewall.
+- name: Persist iptables firewall rules.
   register: configure_iptables
   template:
     src: "iptables.rules.j2"
     dest: "/etc/iptables/rules.v{{ item.version }}"
-    validate: "iptables-restore --test %s"
+    validate: "{{ item.validate }} --test %s"
   loop:
     - version: 4
       ip_tables: "{{ ipv4_tables | default({}) }}"
+      validate: "iptables-restore"
     - version: 6
       ip_tables: "{{ ipv6_tables | default({}) }}"
+      validate: "ip6tables-restore"
   notify: Apply iptables rules.
 
 - name: Apply firewall configuration.

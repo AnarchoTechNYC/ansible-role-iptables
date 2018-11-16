@@ -1,5 +1,16 @@
 ---
 - hosts: all
   become: true
+
+  vars:
+    # Test convenience variables.
+    iptables_open_ports:
+      - protocol: udp
+        destination_port: 5353
+    iptables_closed_ports:
+      - protocol: tcp
+        destination_port: 23
+        target: REJECT
+
   roles:
     - ansible-role-iptables

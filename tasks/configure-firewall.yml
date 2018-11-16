@@ -1,0 +1,70 @@
+---
+- name: Register open ports in IP firewall.
+  when: iptables_open_ports is defined
+  block:
+    - name: Register open ports in IPv4 firewall.
+      set_fact:
+        ipv4_tables: >
+          {{ ipv4_tables | combine({
+              'filter': {
+                'INPUT': {
+                  'rules': ipv4_tables.filter.INPUT.rules + [
+                    item | combine({
+                      'target': item.target | default('ACCEPT')
+                    })
+                  ]
+                }
+              }
+            }, recursive=True) }}
+      loop: "{{ iptables_open_ports }}"
+
+    - name: Register open ports in IPv6 firewall.
+      set_fact:
+        ipv6_tables: >
+          {{ ipv6_tables | combine({
+              'filter': {
+                'INPUT': {
+                  'rules': ipv6_tables.filter.INPUT.rules + [
+                    item | combine({
+                      'target': item.target | default('ACCEPT')
+                    })
+                  ]
+                }
+              }
+            }, recursive=True) }}
+      loop: "{{ iptables_open_ports }}"
+
+- name: Register closed ports in IP firewall.
+  when: iptables_closed_ports is defined
+  block:
+    - name: Register closed ports in IPv4 firewall.
+      set_fact:
+        ipv4_tables: >
+          {{ ipv4_tables | combine({
+              'filter': {
+                'INPUT': {
+                  'rules': ipv4_tables.filter.INPUT.rules + [
+                    item | combine({
+                      'target': item.target | default('DROP')
+                    })
+                  ]
+                }
+              }
+            }, recursive=True) }}
+      loop: "{{ iptables_closed_ports }}"
+
+    - name: Register closed ports in IPv6 firewall.
+      set_fact:
+        ipv6_tables: >
+          {{ ipv6_tables | combine({
+              'filter': {
+                'INPUT': {
+                  'rules': ipv6_tables.filter.INPUT.rules + [
+                    item | combine({
+                      'target': item.target | default('DROP')
+                    })
+                  ]
+                }
+              }
+            }, recursive=True) }}
+      loop: "{{ iptables_closed_ports }}"
