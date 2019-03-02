@@ -5,12 +5,19 @@
   vars:
     # Test convenience variables.
     iptables_open_ports:
+
+      # Test with protocol defined.
       - protocol: udp
         destination_port: 5353
+
+      # Test without protocol defined.
+      - destination_port: 443
+
     iptables_closed_ports:
       - protocol: tcp
         destination_port: 23
-        target: REJECT
+      - destination_port: 11211
+        target: REJECT # Test with alternate jump target.
 
   roles:
     - ansible-role-iptables

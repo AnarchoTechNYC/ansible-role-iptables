@@ -6,15 +6,13 @@ An [Ansible role](https://docs.ansible.com/ansible/latest/user_guide/playbooks_r
 
 The default configuration of the kernel's packet filtering tables for the Internet Protocol version 4 and version 6 network stacks are defined by the `ipv4_tables` and `ipv6_tables` dictionaries, respectively. However, [those variables mimic the structure of the IP filtering tables themselves](#advanced-firewall-configuration), which is harder to remember and more cumbersome to work with.
 
-Most of the time, users simply want a firewall that blocks every incoming packet, except for ones destined for a few chosen ports. For this reason, this role provides a convenience variable, `iptables_open_ports`, which is simply a list of rules that are appended to the `filter` table's `INPUT` chain. For example, to open port `5353` and `80` (for HTTP, aka. Web traffic):
+Most of the time, users simply want a firewall that blocks every incoming packet, except for ones destined for a few chosen ports. For this reason, this role provides a convenience variable, `iptables_open_ports`, which is simply a list of rules that are appended to the `filter` table's `INPUT` chain. For example, to open port `5353` (for mDNS) and `80` (for HTTP, aka. Web traffic):
 
 ```yml
 iptables_open_ports:
   - destination_port: 5353 # Can use a port number,
   - destination_port: http # or a service name in `/etc/services`.
 ```
-
-By default, this role blocks all incoming connections except for port `22`. If you want to open a second port, you must define it in the `iptables_open_ports` list. You can restrict a given 
 
 You can restrict port you open to a given protocol:
 
@@ -25,6 +23,10 @@ iptables_open_ports:
   - protocol: tcp
     destination_port: http
 ```
+
+Omitting the `protocol` will apply the rule to the TCP and UDP protocols. Specifying the `protocol` will apply the rule only to the single specified protocol.
+
+By default, this role blocks all incoming connections except for port `22`. If you want to open additional ports, you must define them in the `iptables_open_ports` list.
 
 # Configuring closed ports
 

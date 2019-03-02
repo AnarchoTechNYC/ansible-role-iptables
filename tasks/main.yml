@@ -24,7 +24,3 @@
       ip_tables: "{{ ipv6_tables | default({}) }}"
       validate: "ip6tables-restore"
   notify: Apply iptables rules.
-
-- name: Apply firewall configuration.
-  when: configure_iptables is changed
-  meta: flush_handlers

@@ -5,14 +5,28 @@
     - name: Register open ports in IPv4 firewall.
       set_fact:
         ipv4_tables: >
+          {%- if item.protocol is defined -%}
+            {%- set rules = [
+              item | combine({
+                'target': item.target | default('ACCEPT')
+              })
+            ] -%}
+          {%- else -%}
+            {%- set rules = [
+              item | combine({
+                'target': item.target | default('ACCEPT'),
+                'protocol': 'tcp'
+              }),
+              item | combine({
+                'target': item.target | default('ACCEPT'),
+                'protocol': 'udp'
+              })
+            ] -%}
+          {%- endif -%}
           {{ ipv4_tables | combine({
               'filter': {
                 'INPUT': {
-                  'rules': ipv4_tables.filter.INPUT.rules + [
-                    item | combine({
-                      'target': item.target | default('ACCEPT')
-                    })
-                  ]
+                  'rules': ipv4_tables.filter.INPUT.rules + rules
                 }
               }
             }, recursive=True) }}
@@ -21,14 +35,28 @@
     - name: Register open ports in IPv6 firewall.
       set_fact:
         ipv6_tables: >
+          {%- if item.protocol is defined -%}
+            {%- set rules = [
+              item | combine({
+                'target': item.target | default('ACCEPT')
+              })
+            ] -%}
+          {%- else -%}
+            {%- set rules = [
+              item | combine({
+                'target': item.target | default('ACCEPT'),
+                'protocol': 'tcp'
+              }),
+              item | combine({
+                'target': item.target | default('ACCEPT'),
+                'protocol': 'udp'
+              })
+            ] -%}
+          {%- endif -%}
           {{ ipv6_tables | combine({
               'filter': {
                 'INPUT': {
-                  'rules': ipv6_tables.filter.INPUT.rules + [
-                    item | combine({
-                      'target': item.target | default('ACCEPT')
-                    })
-                  ]
+                  'rules': ipv6_tables.filter.INPUT.rules + rules
                 }
               }
             }, recursive=True) }}
@@ -40,14 +68,28 @@
     - name: Register closed ports in IPv4 firewall.
       set_fact:
         ipv4_tables: >
+          {%- if item.protocol is defined -%}
+            {%- set rules = [
+              item | combine({
+                'target': item.target | default('DROP')
+              })
+            ] -%}
+          {%- else -%}
+            {%- set rules = [
+              item | combine({
+                'target': item.target | default('DROP'),
+                'protocol': 'tcp'
+              }),
+              item | combine({
+                'target': item.target | default('DROP'),
+                'protocol': 'udp'
+              })
+            ] -%}
+          {%- endif -%}
           {{ ipv4_tables | combine({
               'filter': {
                 'INPUT': {
-                  'rules': ipv4_tables.filter.INPUT.rules + [
-                    item | combine({
-                      'target': item.target | default('DROP')
-                    })
-                  ]
+                  'rules': ipv4_tables.filter.INPUT.rules + rules
                 }
               }
             }, recursive=True) }}
@@ -56,14 +98,28 @@
     - name: Register closed ports in IPv6 firewall.
       set_fact:
         ipv6_tables: >
+          {%- if item.protocol is defined -%}
+            {%- set rules = [
+              item | combine({
+                'target': item.target | default('DROP')
+              })
+            ] -%}
+          {%- else -%}
+            {%- set rules = [
+              item | combine({
+                'target': item.target | default('DROP'),
+                'protocol': 'tcp'
+              }),
+              item | combine({
+                'target': item.target | default('DROP'),
+                'protocol': 'udp'
+              })
+            ] -%}
+          {%- endif -%}
           {{ ipv6_tables | combine({
               'filter': {
                 'INPUT': {
-                  'rules': ipv6_tables.filter.INPUT.rules + [
-                    item | combine({
-                      'target': item.target | default('DROP')
-                    })
-                  ]
+                  'rules': ipv6_tables.filter.INPUT.rules + rules
                 }
               }
             }, recursive=True) }}
