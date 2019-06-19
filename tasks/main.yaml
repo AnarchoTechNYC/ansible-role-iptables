@@ -1,6 +1,6 @@
 ---
 - name: Configure IP firewall.
-  import_tasks: configure-firewall.yml
+  import_tasks: configure-firewall.yaml
 
 - name: Install iptables management utilities.
   package:

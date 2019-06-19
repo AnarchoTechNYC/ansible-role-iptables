@@ -8,7 +8,7 @@ The default configuration of the kernel's packet filtering tables for the Intern
 
 Most of the time, users simply want a firewall that blocks every incoming packet, except for ones destined for a few chosen ports. For this reason, this role provides a convenience variable, `iptables_open_ports`, which is simply a list of rules that are appended to the `filter` table's `INPUT` chain. For example, to open port `5353` (for mDNS) and `80` (for HTTP, aka. Web traffic):
 
-```yml
+```yaml
 iptables_open_ports:
   - destination_port: 5353 # Can use a port number,
   - destination_port: http # or a service name in `/etc/services`.
@@ -16,7 +16,7 @@ iptables_open_ports:
 
 You can restrict port you open to a given protocol:
 
-```yml
+```yaml
 iptables_open_ports:
   - protocol: udp
     destination_port: 5353
@@ -34,14 +34,14 @@ By default, this role blocks all incoming connections not matched by an explicit
 
 If you choose to do that, you may still want to close certain ports, or you simply may want to proactively close ports explicitly. You can accomplish this through the `iptables_closed_ports` convenience variable. For example:
 
-```yml
+```yaml
 iptables_closed_ports:
   - destination_port: 11211
 ```
 
 You can still choose the jump target (action) to take when receiving a packet on a closed port:
 
-```yml
+```yaml
 iptables_closed_ports:
   - destination_port: 11211
     target: REJECT           # Return a `RST` packet.
@@ -64,7 +64,7 @@ This role provides two dictionary variables that model the structure of the Linu
                 * `ip`: Source IP address to match.
                 * `mask`: Network mask in classful or CIDR notation to match.
                 * `not`: Boolean that inverts the source address match. For example:
-                    ```yml
+                    ```yaml
                     source_addresses:
                       - not: true
                         ip: 192.168.1.0
@@ -81,7 +81,7 @@ This role provides two dictionary variables that model the structure of the Linu
 Some examples may prove illustrative:
 
 1. Allow multicast DNS (mDNS) traffic so that `.local` names can be resolved by local Avahi daemons on IPv4:
-    ```yml
+    ```yaml
     ipv4_tables:
       filter:
         INPUT:
@@ -93,4 +93,4 @@ Some examples may prove illustrative:
     ```
 1. :construction: TODO: More examples.
 
-See the comments in the [`defaults/main.yml`](defaults/main.yml) file for further details.
+See the comments in the [`defaults/main.yaml`](defaults/main.yaml) file for further details.
